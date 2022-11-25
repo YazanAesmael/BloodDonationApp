@@ -30,7 +30,6 @@ class NotificationViewModel: ViewModel() {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         notificationDetails.clear()
                         for (dataSnap in snapshot.children) {
-                            Log.d(log, "onDataChange: ${dataSnap.key}")
                             val rUid = dataSnap.key
                             fun getNote() {
                                 database.getReference("Users/$uid/User Details/Messages/Received/$rUid")

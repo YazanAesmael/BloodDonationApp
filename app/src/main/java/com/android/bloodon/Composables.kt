@@ -313,56 +313,6 @@ fun PostTextField() {
 }
 
 @Composable
-fun PostSendTextField() {
-    var selectedText by remember { mutableStateOf("") }
-    val maxChar = 100
-    val focusManager = LocalFocusManager.current
-    var fontSize by remember {
-        mutableStateOf(15.sp)
-    }
-    OutlinedTextField(
-        value = selectedText,
-        onValueChange = {
-            selectedText = it.take(maxChar)
-            note = it
-            fontSize = when (it.length) {
-                in 30..40 -> 14.sp
-                in 41..80 -> 13.sp
-                in 81..101 -> 12.sp
-                else -> 15.sp
-            }
-            if (it.length > maxChar){
-                focusManager.moveFocus(FocusDirection.Down) // Or receive a lambda function
-            }
-        },
-        colors = TextFieldDefaults.textFieldColors(
-            unfocusedIndicatorColor = Color.Black,
-            focusedIndicatorColor = Color.Red,
-            unfocusedLabelColor = Color.Gray,
-            focusedLabelColor = Color.Red,
-            trailingIconColor = Color.Red,
-            cursorColor = Color.Red,
-            textColor = Color.Black,
-            disabledTrailingIconColor = Color.Black,
-            disabledTextColor = Color.LightGray,
-            disabledIndicatorColor = Color.Black,
-            disabledLabelColor = Color.Gray,
-        ),
-        modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp, top = 10.dp)
-            .fillMaxWidth(),
-        enabled = true,
-        shape = RoundedCornerShape(6.dp),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done
-        ),
-        maxLines = 4,
-        textStyle = TextStyle(fontSize = fontSize),
-    )
-}
-
-@Composable
 fun AcceptTextField() {
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
     var selectedText by remember { mutableStateOf("") }

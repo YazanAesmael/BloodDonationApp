@@ -96,7 +96,6 @@ fun getUserName() {
     }
 }
 
-
 fun getPhoneNumber() {
     database.getReference("Users/$uid/User Details")
         .child("phoneNumber/").get().addOnSuccessListener {
@@ -104,30 +103,35 @@ fun getPhoneNumber() {
             Log.d(log, "userPhoneNumber: $phoneNumberProfile")
         }
 }
+
 fun getGroup() {
     database.getReference("Users/$uid/User Details")
         .child("bloodGroup/").get().addOnSuccessListener {
             bloodGroupProfile= it.value.toString()
         }
 }
+
 fun getName() {
     database.getReference("Users/$uid/User Details")
         .child("fullName/").get().addOnSuccessListener {
             fullNameProfile= it.value.toString()
         }
 }
+
 fun getState() {
     database.getReference("Users/$uid/User Details/post")
         .child("state/").get().addOnSuccessListener {
             stateProfile = it.value.toString()
         }
 }
+
 fun getGender() {
     database.getReference("Users/$uid/User Details")
         .child("gender/").get().addOnSuccessListener {
             genderProfile = it.value.toString()
         }
 }
+
 fun getAge() {
     database.getReference("Users/$uid/User Details")
         .child("age/").get().addOnSuccessListener {

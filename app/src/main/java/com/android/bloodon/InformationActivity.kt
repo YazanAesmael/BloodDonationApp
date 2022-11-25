@@ -627,6 +627,7 @@ fun SignUpScreen(navController: NavController) {
                     uploadData(context)
                     navController.navigate("mainBloodScreen_screen"){
                         popUpTo(0)
+                        getUserName()
                     }
                 }
             )
