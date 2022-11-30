@@ -84,6 +84,7 @@ class MainViewModel: ViewModel() {
                                             }
                                         }
                                     }
+
                                     override fun onCancelled(error: DatabaseError) {
                                         response.value = BloodDataState.Failure(error.message)
                                     }

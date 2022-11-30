@@ -6,7 +6,8 @@ class UserDetails(
     val fullName: String,
     val gender: String,
     val phoneNumber: String,
-    val post: String
+    val post: String,
+    val state: String
 )
 
 data class PostDetails(

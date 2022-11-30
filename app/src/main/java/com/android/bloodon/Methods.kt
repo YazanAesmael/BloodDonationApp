@@ -82,7 +82,7 @@ fun onLoginClicked (context: Context, phoneNumber: String, navController: NavCon
 fun uploadData(context: Context) {
     val uid = FirebaseAuth.getInstance().uid.toString()
     val myRef = database.getReference("Users/$uid/User Details")
-    val user = UserDetails(bloodGroup, age, fullName, gender, phoneNumber, post)
+    val user = UserDetails(bloodGroup, age, fullName, gender, phoneNumber, post, state)
     myRef.setValue(user)
         .addOnSuccessListener {
             Toast.makeText(context, "account created successfully!", Toast.LENGTH_SHORT).show()
@@ -119,7 +119,7 @@ fun getName() {
 }
 
 fun getState() {
-    database.getReference("Users/$uid/User Details/post")
+    database.getReference("Users/$uid/User Details")
         .child("state/").get().addOnSuccessListener {
             stateProfile = it.value.toString()
         }

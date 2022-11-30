@@ -611,6 +611,17 @@ fun SignUpScreen(navController: NavController) {
             isString = true,
             "gender"
         )
+        TextViewCompose(text = "What is Your Location?",
+            modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 10.dp),
+            fontColor = Color.Black,
+            textAlign = TextAlign.Start)
+        listViewCompose(
+            label = "Location",
+            stringList = indianCities,
+            numbersList = listOf(0),
+            isString = true,
+            "state"
+        )
         TextViewCompose(text = "How Old Are You?",
             modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 10.dp),
             fontColor = Color.Black,
@@ -699,7 +710,7 @@ fun PhoneNumberScreen(navController: NavController) {
                             fontFamily = poppinsFont,
                             fontSize = 12.sp,
                             modifier = Modifier.clickable {
-                                Toast.makeText(context, "nope. Who needs google anyway!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Coming Soon...", Toast.LENGTH_SHORT).show()
                             }
                         )
                     }
@@ -743,11 +754,8 @@ fun AuthenticatePhoneNumberScreen(navController: NavController) {
                 modifier = Modifier
                     .padding(start = 10.dp, end = 10.dp)
                     .clickable {
-                        navController.navigate("authPhone_screen") {
-                            popUpTo(0)
-                        }
-                    }
-                ,
+
+                    },
                 fontFamily = poppinsFont,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Thin,

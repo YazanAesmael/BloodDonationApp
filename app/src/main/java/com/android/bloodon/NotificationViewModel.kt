@@ -89,13 +89,13 @@ class NotificationViewModel: ViewModel() {
                                                 }
                                             }
                                         }
+
                                         override fun onCancelled(error: DatabaseError) {
                                             response.value = NotificationDataState.Failure(error.message)
                                         }
                                     })
                         }
                     }
-
                     override fun onCancelled(error: DatabaseError) {
                         response.value = NotificationDataState.Failure(error.message)
                     }
