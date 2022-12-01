@@ -100,7 +100,6 @@ fun getPhoneNumber() {
     database.getReference("Users/$uid/User Details")
         .child("phoneNumber/").get().addOnSuccessListener {
             phoneNumberProfile = it.value.toString()
-            Log.d(log, "userPhoneNumber: $phoneNumberProfile")
         }
 }
 

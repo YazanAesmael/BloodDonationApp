@@ -18,7 +18,6 @@ class MainViewModel: ViewModel() {
     }
 
     private fun fetchBloodDataFromFirebase() {
-        Log.d(log,"fetchBloodDataFromFirebase")
         response.value = BloodDataState.Loading
         val database = Firebase.database("https://blood-donor-7d295-default-rtdb.asia-southeast1.firebasedatabase.app")
 

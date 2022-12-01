@@ -377,7 +377,6 @@ fun MyTextField(label: String, isInt: Boolean, type: String) {
         }
         "fullName" -> {
             fullName = selectedText
-            Log.d(log, "newUserName = $fullName")
         }
         "phoneNumber" -> {
             phoneNumber = selectedText

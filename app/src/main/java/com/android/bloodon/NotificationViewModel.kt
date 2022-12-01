@@ -53,7 +53,6 @@ class NotificationViewModel: ViewModel() {
                                 database.getReference("Users/$rUid/User Details")
                                     .child("fullName/").get().addOnSuccessListener {
                                         notName= it.value.toString()
-                                        Log.d(log, "notificationDetailsN: $notName")
                                     }
                             }
                             fun getState() {

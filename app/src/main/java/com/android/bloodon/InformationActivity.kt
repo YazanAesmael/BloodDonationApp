@@ -79,10 +79,10 @@ val indianCities = listOf(
 )
 var bloodGroupProfile: String = "A+"
 var ageProfile: String = "22"
-var fullNameProfile: String = "Yazan Aesmael"
+var fullNameProfile: String = "User_420"
 var genderProfile: String = "Male"
-var phoneNumberProfile: String = "7205698527"
-var stateProfile: String = "Odisha"
+var phoneNumberProfile: String = "xxxxxxxxxx"
+var stateProfile: String = "India"
 
 fun getSplashText(): String {
     val splashTextInfo = listOf(
@@ -174,7 +174,41 @@ fun ProfileScreen(clicked: Boolean) {
                     .fillMaxWidth()
                     .padding(top = 0.dp)
                 ) {
-
+                    TextViewCompose(
+                        text = "Update Information",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp)
+                            .fillMaxWidth(),
+                        fontColor = Color.Black,
+                        textAlign = TextAlign.Center)
+                    Spacer(
+                        modifier = Modifier
+                            .padding(start = 40.dp, end = 40.dp, top = 2.dp, bottom = 20.dp)
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(bloodRed)
+                    )
+                    listViewCompose(
+                        label = "State",
+                        stringList = indianCities,
+                        numbersList = listOf(1, 2, 3, 4, 5),
+                        isString = true,
+                        type = "state"
+                    )
+                    listViewCompose(
+                        label = "Blood Type",
+                        stringList = bloodGroups,
+                        numbersList = listOf(1, 2, 3, 4, 5),
+                        isString = true,
+                        type = "bloodGroup"
+                    )
+                    listViewCompose(
+                        label = "Gender",
+                        stringList = listOf("Male", "Female", "Other", "Prefer Not to Say"),
+                        numbersList = listOf(1, 2, 3, 4, 5),
+                        isString = true,
+                        type = "gender"
+                    )
                 }
             },
             buttons = {
@@ -190,7 +224,20 @@ fun ProfileScreen(clicked: Boolean) {
                             .fillMaxWidth()
                             .focusable(true),
                         onClick = {
+                            Log.d(log, "Clicked = $uid")
                                   downClicked.value = !downClicked.value
+                            database
+                                .getReference("Users/$uid/User Details/state")
+                                .setValue(state)
+                                .addOnSuccessListener {
+                                    Log.d(log, "state = $state, Success")
+                                }
+                                .addOnCompleteListener{
+                                    Log.d(log, "state = $state, Completed")
+                                }
+                                .addOnFailureListener {
+                                    Log.d(log, "state = $state, Failure")
+                                }
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = bloodRed,
@@ -205,8 +252,7 @@ fun ProfileScreen(clicked: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.SpaceBetween
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextViewCompose(
             text = "Profile",
