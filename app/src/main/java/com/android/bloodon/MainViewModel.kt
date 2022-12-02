@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -20,7 +21,7 @@ class MainViewModel: ViewModel() {
     private fun fetchBloodDataFromFirebase() {
         response.value = BloodDataState.Loading
         val database = Firebase.database("https://blood-donor-7d295-default-rtdb.asia-southeast1.firebasedatabase.app")
-
+        val uid = FirebaseAuth.getInstance().uid.toString()
         database.getReference("Users/").addValueEventListener(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -77,13 +78,13 @@ class MainViewModel: ViewModel() {
                                                 "note" -> {
                                                     val postList = BloodRequestsData(fullName, note, priority, bloodUnitPost, bloodGroup, state, userUid)
                                                     if (postDetails.contains(postList)) return
+                                                    if (postList.userUid == uid) return
                                                     postDetails.add(postList)
                                                     response.value = BloodDataState.Success(postDetails)
                                                 }
                                             }
                                         }
                                     }
-
                                     override fun onCancelled(error: DatabaseError) {
                                         response.value = BloodDataState.Failure(error.message)
                                     }

@@ -165,9 +165,6 @@ fun ProfileScreen(clicked: Boolean, navController: NavController) {
     val downClicked = remember{
         mutableStateOf(clicked)
     }
-    val downClickedDelete = remember{
-        mutableStateOf(clicked)
-    }
     if (downClicked.value) {
         AlertDialog(
             shape = RoundedCornerShape(10.dp),
@@ -252,14 +249,41 @@ fun ProfileScreen(clicked: Boolean, navController: NavController) {
                             .fillMaxWidth()
                             .focusable(true),
                         onClick = {
-                            Log.d(log, "Clicked = $uid")
-                                  downClicked.value = !downClicked.value
+                            downClicked.value = !downClicked.value
+                            if (state.isBlank() || equals(null)) state = stateProfile
+                            if (bloodGroup.isBlank() || equals(null)) bloodGroup = bloodGroupProfile
+                            if (gender.isBlank() || equals(null)) gender = genderProfile
                             database
                                 .getReference("Users/$uid/User Details/state")
                                 .setValue(state)
                                 .addOnSuccessListener {
                                     Log.d(log, "state = $state, Success")
+                                    getState()
+                                    navController.navigate("profile_screen"){
+                                        popUpTo(0)
+                                    }
                                 }
+                            database
+                                .getReference("Users/$uid/User Details/bloodGroup")
+                                .setValue(bloodGroup)
+                                .addOnSuccessListener {
+                                    Log.d(log, "bloodGroup = $bloodGroup, Success")
+                                    getGroup()
+                                    navController.navigate("profile_screen"){
+                                        popUpTo(0)
+                                    }
+                                }
+                            database
+                                .getReference("Users/$uid/User Details/gender")
+                                .setValue(gender)
+                                .addOnSuccessListener {
+                                    Log.d(log, "gender = $gender, Success")
+                                    getGender()
+                                    navController.navigate("profile_screen"){
+                                        popUpTo(0)
+                                    }
+                                }
+
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = bloodRed,
@@ -271,6 +295,89 @@ fun ProfileScreen(clicked: Boolean, navController: NavController) {
             },
         )
     } // Alert Dialog
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TextViewCompose(
+            text = "Profile",
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .padding(start = 10.dp, end = 10.dp),
+            fontColor = Color.Black,
+            textAlign = TextAlign.Start)
+        Spacer(modifier = Modifier
+            .padding(start = 80.dp, end = 80.dp)
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(bloodRed)
+        )
+        Column(
+            modifier = Modifier
+                .padding(start = 10.dp, end = 10.dp, bottom = 10.dp, top = 20.dp)
+                .fillMaxWidth()
+                .border(Dp.Hairline, Color.Transparent, RoundedCornerShape(10.dp)),
+//            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(40.dp))
+            ProfileRowCompose("Full Name", fullNameProfile, true)
+            ProfileRowCompose("Phone Number", phoneNumberProfile, false)
+            ProfileRowCompose("Location", stateProfile, true)
+            ProfileRowCompose("Gender", genderProfile, true)
+            ProfileRowCompose("Blood Group", bloodGroupProfile, false)
+            ProfileRowCompose("Age", "$ageProfile years old", true)
+            Row(
+                modifier = Modifier
+                    .padding(top = 20.dp, bottom = 20.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+                        downClicked.value = !downClicked.value
+                    },
+                    modifier = Modifier
+                        .padding(start = 10.dp, end = 10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.White
+                    ),
+                    border = BorderStroke(Dp.Hairline, Color.LightGray),
+                    shape = RoundedCornerShape(10.dp),
+                    elevation = ButtonDefaults.elevation(
+                        defaultElevation = 0.dp
+                    )
+                ) {
+                    Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Edit", tint = Color.DarkGray)
+                }
+                Button(
+                    onClick = {
+                              navController.navigate("settings_screen")
+                    },
+                    modifier = Modifier
+                        .padding(start = 0.dp, end = 10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.White
+                    ),
+                    border = BorderStroke(Dp.Hairline, Color.LightGray),
+                    shape = RoundedCornerShape(10.dp),
+                    elevation = ButtonDefaults.elevation(
+                        defaultElevation = 0.dp
+                    )
+                ) {
+                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings", tint = Color.DarkGray)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SettingsScreen(navController: NavController, clicked: Boolean) {
+    val downClickedDelete = remember{
+        mutableStateOf(clicked)
+    }
     if (downClickedDelete.value) {
         AlertDialog(
             shape = RoundedCornerShape(10.dp),
@@ -327,13 +434,12 @@ fun ProfileScreen(clicked: Boolean, navController: NavController) {
                             .fillMaxWidth()
                             .focusable(true),
                         onClick = {
-                            Log.d(log, "Clicked = $uid")
-                            downClickedDelete.value = !downClickedDelete.value
                             val user = Firebase.auth.currentUser
-                            val uid = user?.uid
                             user?.delete()?.addOnCompleteListener { task ->
+                                Log.d(log, "${task.exception}")
                                 if (task.isSuccessful) {
-                                    Log.d(log, "$uid deleted.")
+                                    Log.d(log, "task done..")
+                                    downClickedDelete.value = !downClickedDelete.value
                                     navController.navigate("splash_screen"){
                                         popUpTo(0)
                                     }
@@ -350,14 +456,14 @@ fun ProfileScreen(clicked: Boolean, navController: NavController) {
             },
         )
     } // Alert Dialog Delete
-
     Column(
         modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxWidth()
+            .background(Color.White),
+    horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextViewCompose(
-            text = "Profile",
+            text = "Settings",
             modifier = Modifier
                 .padding(top = 16.dp)
                 .padding(start = 10.dp, end = 10.dp),
@@ -369,84 +475,37 @@ fun ProfileScreen(clicked: Boolean, navController: NavController) {
             .height(1.dp)
             .background(bloodRed)
         )
-        Column(
-            modifier = Modifier
-                .padding(start = 10.dp, end = 10.dp, bottom = 10.dp, top = 40.dp)
-                .fillMaxWidth()
-                .border(Dp.Hairline, Color.LightGray, RoundedCornerShape(10.dp)),
-//            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(20.dp))
-            ProfileRowCompose("Full Name", fullNameProfile, true)
-            ProfileRowCompose("Phone Number", phoneNumberProfile, false)
-            ProfileRowCompose("Location", stateProfile, true)
-            ProfileRowCompose("Gender", genderProfile, true)
-            ProfileRowCompose("Blood Group", bloodGroupProfile, false)
-            ProfileRowCompose("Age", "$ageProfile years old", true)
-            Row(
-                modifier = Modifier
-                    .padding(top = 40.dp, bottom = 20.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    onClick = {
-                        downClicked.value = !downClicked.value
-                    },
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.White
-                    ),
-                    border = BorderStroke(Dp.Hairline, Color.LightGray),
-                    shape = RoundedCornerShape(10.dp),
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 0.dp
-                    )
-                ) {
-                    Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Edit", tint = Color.DarkGray)
-                }
-                Button(
-                    onClick = {
-                              navController.navigate("settings_screen")
-                    },
-                    modifier = Modifier
-                        .padding(start = 0.dp, end = 10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.White
-                    ),
-                    border = BorderStroke(Dp.Hairline, Color.LightGray),
-                    shape = RoundedCornerShape(10.dp),
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 0.dp
-                    )
-                ) {
-                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings", tint = Color.DarkGray)
-                }
-            }
-        }
-
     }
-}
-
-@Composable
-fun SettingsScreen() {
-    TextViewCompose(
-        text = "Settings",
+    Column(
         modifier = Modifier
-            .padding(top = 16.dp)
-            .padding(start = 10.dp, end = 10.dp),
-        fontColor = Color.Black,
-        textAlign = TextAlign.Start)
-    Spacer(modifier = Modifier
-        .padding(start = 80.dp, end = 80.dp)
-        .fillMaxWidth()
-        .height(1.dp)
-        .background(bloodRed)
-    )
-    Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
-
+            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp, top = 40.dp)
+            .fillMaxSize()
+            .border(Dp.Hairline, Color.Transparent, RoundedCornerShape(10.dp)),
+        horizontalAlignment = Alignment.Start
+    ) {
+        SettingsRow(title = "Notifications", isChecked = true)
+        SettingsRow(title = "Track Location", isChecked = false)
+        SettingsRow(title = "Visible Account", isChecked = true)
+        Row(modifier = Modifier
+            .padding(bottom = 10.dp, top = 30.dp)
+            .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Delete Account",
+                fontSize = 20.sp,
+                color =  bloodRed,
+                fontWeight = FontWeight.Light,
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .padding(4.dp)
+                    .clickable {
+                        downClickedDelete.value = !downClickedDelete.value
+                    },
+                textDecoration = TextDecoration.Underline
+            )
+        }
     }
 }
 
@@ -946,7 +1005,7 @@ fun InfoPreview() {
 //        MainBloodScreen(rememberNavController())
 //        DonateChatScreen(notificationDetails = mutableListOf(NotificationsData()))
 //        ProfileScreen(false, rememberNavController())
-        SettingsScreen()
+        SettingsScreen(rememberNavController(), true)
     }
 }
 

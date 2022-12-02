@@ -24,6 +24,11 @@ fun Navigation() {
                 ProfileScreenCompose(navController)
             }
         }
+        composable("settings_screen") {
+            Column(modifier = Modifier.fillMaxSize()) {
+                SettingsScreen(navController, false)
+            }
+        }
         composable("mainBloodScreen_screen") {
             MainScreenCompose(navController)
         }

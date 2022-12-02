@@ -943,19 +943,46 @@ fun SetBloodData(viewModel: MainViewModel) {
 }
 
 @Composable
+fun ColumnCompose() {
+    Column(
+        modifier = Modifier
+            .padding(2.dp)
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TextViewCompose(
+            text = "Notifications",
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .padding(start = 10.dp, end = 10.dp),
+            fontColor = Color.Black,
+            textAlign = TextAlign.Start
+        )
+        Spacer(
+            modifier = Modifier
+                .padding(start = 80.dp, end = 80.dp)
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(bloodRed)
+        )
+    }
+}
+
+@Composable
 fun SetNotificationData(viewModel: NotificationViewModel) {
     when (val result = viewModel.response.value) {
         is NotificationDataState.Loading -> {
-            Text(text = "Loading")
+            ColumnCompose()
         }
         is NotificationDataState.Empty-> {
-            Text(text = "Empty")
+            ColumnCompose()
         }
         is NotificationDataState.Success -> {
             DonateChatScreen(result.postDetails)
         }
         is NotificationDataState.Failure -> {
-            Text(text = "Failure")
+            ColumnCompose()
         }
     }
 }
@@ -1026,6 +1053,32 @@ fun ProfileScreenCompose(navController: NavController) {
             .background(Color.White)) {
             ProfileScreen(false, navController)
         }
+    }
+}
+
+@Composable
+fun SettingsRow(title: String, isChecked: Boolean) {
+    Row(modifier = Modifier
+        .padding(bottom = 10.dp)
+        .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = title,
+            fontSize = 26.sp,
+            color =  Color.DarkGray,
+            fontWeight = FontWeight.Light,
+            modifier = Modifier.padding(start = 4.dp)
+        )
+        val checkedState = remember { mutableStateOf(isChecked) }
+        Switch(
+            checked = checkedState.value,
+            onCheckedChange = { checkedState.value = it },
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = bloodRed,
+                checkedTrackColor = bloodRed,
+                uncheckedThumbColor = Color.DarkGray,
+                uncheckedTrackColor = Color.DarkGray
+            )
+        )
     }
 }
 
