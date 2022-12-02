@@ -1024,7 +1024,7 @@ fun ProfileScreenCompose(navController: NavController) {
         Column(modifier = Modifier
             .padding(padding)
             .background(Color.White)) {
-            ProfileScreen(false)
+            ProfileScreen(false, navController)
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.MarkEmailUnread
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +31,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 
 internal val poppinsFont = FontFamily(Font(R.font.poppins_regular))
@@ -157,8 +161,11 @@ fun SplashScreen( navController: NavController) {
 }
 
 @Composable
-fun ProfileScreen(clicked: Boolean) {
+fun ProfileScreen(clicked: Boolean, navController: NavController) {
     val downClicked = remember{
+        mutableStateOf(clicked)
+    }
+    val downClickedDelete = remember{
         mutableStateOf(clicked)
     }
     if (downClicked.value) {
@@ -188,6 +195,13 @@ fun ProfileScreen(clicked: Boolean) {
                             .height(1.dp)
                             .background(bloodRed)
                     )
+                    TextViewCompose(
+                        text = "Update Location",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp, top = 4.dp)
+                            .fillMaxWidth(),
+                        fontColor = Color.Black,
+                        textAlign = TextAlign.Start)
                     listViewCompose(
                         label = "State",
                         stringList = indianCities,
@@ -195,13 +209,27 @@ fun ProfileScreen(clicked: Boolean) {
                         isString = true,
                         type = "state"
                     )
+                    TextViewCompose(
+                        text = "Update Blood Group",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp, top = 4.dp)
+                            .fillMaxWidth(),
+                        fontColor = Color.Black,
+                        textAlign = TextAlign.Start)
                     listViewCompose(
-                        label = "Blood Type",
+                        label = "Blood Group",
                         stringList = bloodGroups,
                         numbersList = listOf(1, 2, 3, 4, 5),
                         isString = true,
                         type = "bloodGroup"
                     )
+                    TextViewCompose(
+                        text = "Update Gender",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp, top = 4.dp)
+                            .fillMaxWidth(),
+                        fontColor = Color.Black,
+                        textAlign = TextAlign.Start)
                     listViewCompose(
                         label = "Gender",
                         stringList = listOf("Male", "Female", "Other", "Prefer Not to Say"),
@@ -232,12 +260,6 @@ fun ProfileScreen(clicked: Boolean) {
                                 .addOnSuccessListener {
                                     Log.d(log, "state = $state, Success")
                                 }
-                                .addOnCompleteListener{
-                                    Log.d(log, "state = $state, Completed")
-                                }
-                                .addOnFailureListener {
-                                    Log.d(log, "state = $state, Failure")
-                                }
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = bloodRed,
@@ -249,6 +271,86 @@ fun ProfileScreen(clicked: Boolean) {
             },
         )
     } // Alert Dialog
+    if (downClickedDelete.value) {
+        AlertDialog(
+            shape = RoundedCornerShape(10.dp),
+            backgroundColor = Color.White,
+            onDismissRequest = {
+                downClickedDelete.value = !downClickedDelete.value
+            },
+            title = null,
+            text = {
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 0.dp)
+                ) {
+                    TextViewCompose(
+                        text = "Delete Account",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp)
+                            .fillMaxWidth(),
+                        fontColor = Color.Black,
+                        textAlign = TextAlign.Center)
+                    Spacer(
+                        modifier = Modifier
+                            .padding(start = 40.dp, end = 40.dp, top = 2.dp, bottom = 20.dp)
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(bloodRed)
+                    )
+                    TextViewCompose(
+                        text = "Why delete your account?",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
+                            .fillMaxWidth(),
+                        fontColor = Color.Black,
+                        textAlign = TextAlign.Start)
+                    listViewCompose(
+                        label = "",
+                        stringList = listOf("No Reason", "Found a Better App", "Done Donating Blood", "Done Requesting Blood"),
+                        numbersList = listOf(1, 2, 3, 4, 5),
+                        isString = true,
+                        type = "bloodGroup"
+                    )
+                }
+            },
+            buttons = {
+                Row(
+                    modifier = Modifier
+                        .padding(bottom = 20.dp, end = 8.dp, start = 8.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        modifier = Modifier
+                            .padding(start = 30.dp, end = 30.dp)
+                            .fillMaxWidth()
+                            .focusable(true),
+                        onClick = {
+                            Log.d(log, "Clicked = $uid")
+                            downClickedDelete.value = !downClickedDelete.value
+                            val user = Firebase.auth.currentUser
+                            val uid = user?.uid
+                            user?.delete()?.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Log.d(log, "$uid deleted.")
+                                    navController.navigate("splash_screen"){
+                                        popUpTo(0)
+                                    }
+                                }
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = bloodRed,
+                            contentColor = Color.White)
+                    ) {
+                        Text("Delete Account", fontFamily = poppinsFont)
+                    }
+                }
+            },
+        )
+    } // Alert Dialog Delete
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -269,12 +371,13 @@ fun ProfileScreen(clicked: Boolean) {
         )
         Column(
             modifier = Modifier
-                .padding(10.dp)
-                .fillMaxSize()
+                .padding(start = 10.dp, end = 10.dp, bottom = 10.dp, top = 40.dp)
+                .fillMaxWidth()
                 .border(Dp.Hairline, Color.LightGray, RoundedCornerShape(10.dp)),
-            verticalArrangement = Arrangement.Center,
+//            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(20.dp))
             ProfileRowCompose("Full Name", fullNameProfile, true)
             ProfileRowCompose("Phone Number", phoneNumberProfile, false)
             ProfileRowCompose("Location", stateProfile, true)
@@ -283,7 +386,7 @@ fun ProfileScreen(clicked: Boolean) {
             ProfileRowCompose("Age", "$ageProfile years old", true)
             Row(
                 modifier = Modifier
-                    .padding(top = 40.dp)
+                    .padding(top = 40.dp, bottom = 20.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -294,7 +397,7 @@ fun ProfileScreen(clicked: Boolean) {
                     modifier = Modifier
                         .padding(start = 10.dp, end = 10.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Transparent
+                        backgroundColor = Color.White
                     ),
                     border = BorderStroke(Dp.Hairline, Color.LightGray),
                     shape = RoundedCornerShape(10.dp),
@@ -306,12 +409,12 @@ fun ProfileScreen(clicked: Boolean) {
                 }
                 Button(
                     onClick = {
-                        downClicked.value = !downClicked.value
+                              navController.navigate("settings_screen")
                     },
                     modifier = Modifier
                         .padding(start = 0.dp, end = 10.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Transparent
+                        backgroundColor = Color.White
                     ),
                     border = BorderStroke(Dp.Hairline, Color.LightGray),
                     shape = RoundedCornerShape(10.dp),
@@ -319,10 +422,30 @@ fun ProfileScreen(clicked: Boolean) {
                         defaultElevation = 0.dp
                     )
                 ) {
-                    Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete", tint = Color.DarkGray)
+                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings", tint = Color.DarkGray)
                 }
             }
         }
+
+    }
+}
+
+@Composable
+fun SettingsScreen() {
+    TextViewCompose(
+        text = "Settings",
+        modifier = Modifier
+            .padding(top = 16.dp)
+            .padding(start = 10.dp, end = 10.dp),
+        fontColor = Color.Black,
+        textAlign = TextAlign.Start)
+    Spacer(modifier = Modifier
+        .padding(start = 80.dp, end = 80.dp)
+        .fillMaxWidth()
+        .height(1.dp)
+        .background(bloodRed)
+    )
+    Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
 
     }
 }
@@ -822,7 +945,8 @@ fun InfoPreview() {
 //        AppBarCompose("")
 //        MainBloodScreen(rememberNavController())
 //        DonateChatScreen(notificationDetails = mutableListOf(NotificationsData()))
-        ProfileScreen(false)
+//        ProfileScreen(false, rememberNavController())
+        SettingsScreen()
     }
 }
 
